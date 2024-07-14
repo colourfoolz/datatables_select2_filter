@@ -20,6 +20,12 @@
         align-items: center;
         margin-bottom: 10px;
     }
+    .checkbox-header {
+        text-align: center;
+    }
+    .checkbox-cell {
+        text-align: center;
+    }
 </style>
 </head>
 <body>
@@ -33,25 +39,26 @@
             <!-- Options will be populated dynamically -->
         </select>
     </div>
-	<div>
-		<button id="exportExcel" class="dt-button buttons-excel">Excel</button>
-	</div>
+    <div>
+        <button id="exportExcel" class="dt-button buttons-excel">Export Selected to Excel</button>
+    </div>
 </div>
 
 <div>
-        <label>Show 
-            <select id="pageLength" class="custom-select custom-select-sm form-control form-control-sm">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select> 
-        entries</label>
-    </div>
+    <label>Show 
+        <select id="pageLength" class="custom-select custom-select-sm form-control form-control-sm">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select> 
+    entries</label>
+</div>
 
 <table id="example" class="display" style="width:100%">
     <thead>
         <tr>
+            <th class="checkbox-header"><input type="checkbox" id="selectAllCheckbox"></th>
             <th>Name</th>
             <th>Position</th>
             <th>Office</th>
@@ -62,6 +69,7 @@
     </thead>
     <tbody>
         <tr>
+            <td class="checkbox-cell"><input type="checkbox" class="rowCheckbox"></td>
             <td>Yuniko</td>
             <td>Supervisor</td>
             <td>PT Medika</td>
@@ -70,6 +78,7 @@
             <td>8.000.000</td>
         </tr>
         <tr>
+            <td class="checkbox-cell"><input type="checkbox" class="rowCheckbox"></td>
             <td>Satria</td>
             <td>Manager</td>
             <td>PT Medika OHIH</td>
@@ -77,18 +86,29 @@
             <td>24 Juni 2024</td>
             <td>10.000.000</td>
         </tr>
+        <!-- Add more rows as needed -->
     </tbody>
 </table>
 
 <script>
 $(document).ready(function() {
+    var columnsToExport = [1, 2, 3, 4, 5, 6]; // Array default untuk kolom yang akan diekspor
+
     var table = $('#example').DataTable({
         dom: 'Bfrtip',
         buttons: [
             {
-                extend: 'excel',
-                text: 'Excel',
-                className: '',
+                extend: 'excelHtml5',
+                text: 'Export Selected to Excel',
+                className: 'buttons-excel',
+                exportOptions: {
+                    rows: function(idx, data, node) {
+                        return $(node).find('.rowCheckbox').prop('checked');
+                    },
+                    columns: function(idx, data, node) {
+                        return columnsToExport.includes(idx);
+                    }
+                },
                 init: function(api, node, config) {
                     $(node).css('display', 'none');
                 }
@@ -169,7 +189,28 @@ $(document).ready(function() {
         table.page.len(length).draw();
     });
 
-    // Bind export button to DataTables Excel button
+    // Select all checkboxes functionality
+    $('#selectAllCheckbox').on('change', function() {
+        var isChecked = $(this).prop('checked');
+        $('.rowCheckbox').prop('checked', isChecked);
+    });
+
+    // Individual row checkbox functionality
+    $('#example tbody').on('change', '.rowCheckbox', function() {
+        if (!$(this).prop('checked')) {
+            $('#selectAllCheckbox').prop('checked', false);
+        } else {
+            var allChecked = true;
+            $('.rowCheckbox').each(function() {
+                if (!$(this).prop('checked')) {
+                    allChecked = false;
+                }
+            });
+            $('#selectAllCheckbox').prop('checked', allChecked);
+        }
+    });
+
+    // Custom export button functionality
     $('#exportExcel').on('click', function() {
         table.button('.buttons-excel').trigger();
     });
