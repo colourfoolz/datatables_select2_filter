@@ -122,6 +122,13 @@ $(document).ready(function() {
             table.columns().search('').draw();
         }
     });
+
+    // Close Select2 dropdown on outside click
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('.select2-container').length && !$(event.target).is('#filterSelect')) {
+            $('#filterSelect').select2('close');
+        }
+    });
 });
 </script>
 
