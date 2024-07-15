@@ -20,11 +20,20 @@
         align-items: center;
         margin-bottom: 10px;
     }
+	.rowsSearch{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
     .checkbox-header {
         text-align: center;
     }
     .checkbox-cell {
         text-align: center;
+    }
+	div.dataTables_wrapper div.dataTables_filter {
+        display: none; /* Hide default search */
     }
 </style>
 </head>
@@ -44,8 +53,9 @@
     </div>
 </div>
 
-<div>
-    <label>Show 
+<div class="rowsSearch">
+    <div>
+		<label>Show 
         <select id="pageLength" class="custom-select custom-select-sm form-control form-control-sm">
             <option value="10">10</option>
             <option value="25">25</option>
@@ -53,6 +63,11 @@
             <option value="100">100</option>
         </select> 
     entries</label>
+	</div>
+	
+	<div>
+		<input type="search" id="tableSearch" placeholder="Cari">
+	</div>
 </div>
 
 <table id="example" class="display" style="width:100%">
@@ -60,7 +75,7 @@
         <tr>
             <th class="checkbox-header"><input type="checkbox" id="selectAllCheckbox"></th>
             <th>Name</th>
-            <th>Position</th>
+            <th>Position Karyawan</th>
             <th>Office</th>
             <th>Age</th>
             <th>Start date</th>
@@ -121,7 +136,7 @@ $(document).ready(function() {
         var filterSelect = $('#filterSelect');
         filterSelect.empty();
 
-        var columnsToFilter = ['Position', 'Office', 'Salary']; // Columns to include in the filter
+        var columnsToFilter = ['Position Karyawan', 'Office', 'Salary']; // Columns to include in the filter
 
         table.columns().every(function() {
             var column = this;
@@ -212,6 +227,11 @@ $(document).ready(function() {
     // Custom export button functionality
     $('#exportExcel').on('click', function() {
         table.button('.buttons-excel').trigger();
+    });
+
+    // Search functionality
+    $('#tableSearch').on('keyup', function() {
+        table.search($(this).val()).draw();
     });
 });
 </script>
