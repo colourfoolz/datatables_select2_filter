@@ -63,6 +63,7 @@
         margin-top: 20px;
         text-align: center;
     }
+
 </style>
 </head>
 <body>
@@ -513,6 +514,7 @@ $(document).ready(function() {
             $('#custom-pagination').append($('.dataTables_paginate'));
             // Move info element to custom container
             $('#custom-info').append($('.dataTables_info'));
+			
         },
         pagingType: 'full_numbers_no_ellipses',
 		paging: 3,
@@ -524,7 +526,11 @@ $(document).ready(function() {
                 next: '>',
                 previous: '<'
             }
-        }
+        },
+		order: [],
+		columnDefs: [
+			{ targets: [0], orderable: false } // Menonaktifkan pengurutan pada kolom pertama (checkboxes)
+		]
     });
 	
 	
