@@ -20,7 +20,7 @@
         align-items: center;
         margin-bottom: 10px;
     }
-	.rowsSearch{
+    .rowsSearch {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -32,7 +32,7 @@
     .checkbox-cell {
         text-align: center;
     }
-	div.dataTables_wrapper div.dataTables_filter {
+    div.dataTables_wrapper div.dataTables_filter {
         display: none; /* Hide default search */
     }
 </style>
@@ -55,7 +55,7 @@
 
 <div class="rowsSearch">
     <div>
-		<label>Show 
+        <label>Show 
         <select id="pageLength" class="custom-select custom-select-sm form-control form-control-sm">
             <option value="10">10</option>
             <option value="25">25</option>
@@ -63,11 +63,11 @@
             <option value="100">100</option>
         </select> 
     entries</label>
-	</div>
-	
-	<div>
-		<input type="search" id="tableSearch" placeholder="Cari">
-	</div>
+    </div>
+    
+    <div>
+        <input type="search" id="tableSearch" placeholder="Cari">
+    </div>
 </div>
 
 <table id="example" class="display" style="width:100%">
@@ -105,6 +105,11 @@
     </tbody>
 </table>
 
+<div id="custom-info-pagination" class="controls">
+    <div id="custom-info"></div>
+    <div id="custom-pagination"></div>
+</div> <!-- New container for info and pagination -->
+
 <script>
 $(document).ready(function() {
     var columnsToExport = [1, 2, 3, 4, 5, 6]; // Array default untuk kolom yang akan diekspor
@@ -128,7 +133,13 @@ $(document).ready(function() {
                     $(node).css('display', 'none');
                 }
             }
-        ]
+        ],
+        initComplete: function() {
+            // Move pagination controls to custom container
+            $('#custom-pagination').append($('.dataTables_paginate'));
+            // Move info element to custom container
+            $('#custom-info').append($('.dataTables_info'));
+        }
     });
 
     // Populate nested select options dynamically
