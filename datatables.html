@@ -35,7 +35,7 @@
 <div class="controls">
     <div>
         <label for="filterSelect">Filter by:</label>
-        <select id="filterSelect" style="width: 300px;">
+        <select id="filterSelect" style="width: 300px;" multiple>
             <!-- Options will be populated dynamically -->
         </select>
     </div>
@@ -121,9 +121,6 @@ $(document).ready(function() {
         var filterSelect = $('#filterSelect');
         filterSelect.empty();
 
-        // Add default option
-        filterSelect.append('<option value="">Default</option>');
-
         var columnsToFilter = ['Position', 'Office', 'Salary']; // Columns to include in the filter
 
         table.columns().every(function() {
@@ -154,19 +151,21 @@ $(document).ready(function() {
     // Initial population of filter options
     populateFilterOptions();
 
-    // Apply filter on change of filterSelect
+    // Apply filters on change of filterSelect
     $('#filterSelect').on('change', function() {
-        var selectedValue = $(this).val();
-        if (selectedValue) {
-            var parts = selectedValue.split(':');
-            var columnName = parts[0];
-            var filterValue = parts[1];
-
+        var selectedValues = $(this).val();
+        if (selectedValues && selectedValues.length > 0) {
             table.columns().every(function() {
                 var column = this;
-                var columnHeader = $(column.header()).text();
-                if (columnHeader === columnName) {
-                    column.search(filterValue).draw();
+                var columnName = $(column.header()).text();
+                var filterValues = selectedValues.filter(function(value) {
+                    return value.startsWith(columnName + ':');
+                }).map(function(value) {
+                    return value.split(':')[1];
+                });
+
+                if (filterValues.length > 0) {
+                    column.search(filterValues.join('|'), true, false).draw();
                 } else {
                     column.search('').draw();
                 }
